@@ -1,5 +1,5 @@
 /*{
-    "DESCRIPTION": "Sierpinski Triangle fractal using the chaos game algorithm",
+    "DESCRIPTION": "Sierpinski Triangle fractal using iterative space folding",
     "CREDIT": "ISF Shader Collection",
     "ISFVSN": "2.0",
     "CATEGORIES": ["Generator", "Fractal"],

@@ -64,13 +64,11 @@ vec3 hsv2rgb(vec3 c) {
 }
 
 // Color palette based on iteration count
-vec3 getColor(float iter, float maxIter) {
-    if (iter >= maxIter) {
+vec3 getColor(float smoothIter, float maxIter) {
+    if (smoothIter >= maxIter) {
         return vec3(0.0); // Black for points inside the set
     }
     
-    // Smooth coloring using continuous potential
-    float smoothIter = iter + 1.0 - log(log(2.0)) / log(2.0);
     float t = smoothIter / maxIter;
     t = fract(t * colorIntensity + colorCycle);
     
@@ -115,6 +113,7 @@ void main() {
     vec2 z = vec2(0.0);
     float iter = 0.0;
     float maxIter = maxIterations;
+    bool escaped = false;
     
     for (float i = 0.0; i < 500.0; i++) {
         if (i >= maxIter) break;
@@ -124,16 +123,24 @@ void main() {
         z.y = 2.0 * z.x * z.y + c.y;
         z.x = xTemp;
         
+        iter = i + 1.0;
+        
         // Check for escape
         if (dot(z, z) > 4.0) {
+            escaped = true;
             break;
         }
-        
-        iter = i;
+    }
+    
+    // Calculate smooth iteration count
+    float smoothIter = maxIter;
+    if (escaped) {
+        // Smooth coloring using continuous potential with final z value
+        smoothIter = iter - log(log(length(z))) / log(2.0);
     }
     
     // Get color based on iteration count
-    vec3 color = getColor(iter, maxIter);
+    vec3 color = getColor(smoothIter, maxIter);
     
     gl_FragColor = vec4(color, 1.0);
 }
