@@ -1,0 +1,57 @@
+name: Build FFGL Plugins
+
+on:
+  push:
+    paths:
+      - 'ffgl_agentic/**'
+  pull_request:
+    paths:
+      - 'ffgl_agentic/**'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ffgl_agentic
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Configure CMake
+        run: cmake -B build -S . -G "Visual Studio 17 2022"
+      
+      - name: Build
+        run: cmake --build build --config Release
+      
+      - name: Upload DLLs
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffgl-plugins-windows
+          path: ffgl_agentic/build/Release/*.dll
+
+  build-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: ffgl_agentic
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - name: Configure CMake
+        run: cmake -B build -S .
+      
+      - name: Build
+        run: cmake --build build --config Release
+      
+      - name: Upload Bundles
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffgl-plugins-macos
+          path: ffgl_agentic/build/*.bundle
