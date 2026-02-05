@@ -1,0 +1,81 @@
+/*
+{
+  "DESCRIPTION": "Sketchbook Drawing Reveal v4.1 – ISF/Resolume compatible, edges fill first, lines grow out with hatching and jitter.",
+  "CREDIT": "Grok; based on ISF-Files, Lygia, Shadertoy references",
+  "ISFVSN": "2",
+  "CATEGORIES": [ "Transition" ],
+  "INPUTS": [
+    { "NAME": "startImage",   "TYPE": "image", "LABEL": "Outgoing Image" },
+    { "NAME": "endImage",     "TYPE": "image", "LABEL": "Incoming Image" },
+    { "NAME": "progress",     "TYPE": "float", "MIN": 0.0, "MAX": 1.0, "DEFAULT": 0.0, "LABEL": "Progress" },
+    { "NAME": "edgeGain",     "TYPE": "float", "MIN": 0.0, "MAX": 3.0, "DEFAULT": 1.4, "LABEL": "Edge Reveal Strength" },
+    { "NAME": "lumaHatch",    "TYPE": "float", "MIN": 0.0, "MAX": 3.0, "DEFAULT": 0.8, "LABEL": "Luminance Hatch Factor" },
+    { "NAME": "hatchIntensity", "TYPE": "float", "MIN": 0.0, "MAX": 1.0, "DEFAULT": 0.5, "LABEL": "Hatch Intensity" },
+    { "NAME": "density",      "TYPE": "float", "MIN": 5.0, "MAX": 90.0, "DEFAULT": 35.0, "LABEL": "Base Hatch Density" },
+    { "NAME": "jitter",       "TYPE": "float", "MIN": 0.0, "MAX": 1.0, "DEFAULT": 0.25, "LABEL": "Line Jitter" },
+    { "NAME": "overlapDuration", "TYPE": "float", "MIN": 0.1, "MAX": 1.0, "DEFAULT": 0.45, "LABEL": "Overlap Duration" },
+    { "NAME": "overlapSoftness", "TYPE": "float", "MIN": 0.0, "MAX": 0.5, "DEFAULT": 0.18, "LABEL": "Overlap Softness" },
+    { "NAME": "animSpeed",    "TYPE": "float", "MIN": 0.0, "MAX": 1.0, "DEFAULT": 0.09, "LABEL": "Anim Speed" }
+  ]
+}
+*/
+
+float hash(vec2 p) { return fract(sin(dot(p, vec2(23.3, 91.7))) * 7241.155); }
+float getLuma(vec4 c) { return dot(c.rgb, vec3(0.299, 0.587, 0.114)); }
+
+vec2 pixelSize() { return 1.0 / RENDERSIZE.xy; }
+
+float sobel(vec2 uv, sampler2D tex) {
+  vec2 px = pixelSize();
+  float tl = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2(-1,-1)));
+  float  l = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2(-1, 0)));
+  float bl = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2(-1, 1)));
+  float  t = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2( 0,-1)));
+  float  c = getLuma(IMG_NORM_PIXEL(tex, uv));
+  float  b = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2( 0, 1)));
+  float tr = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2( 1,-1)));
+  float  r = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2( 1, 0)));
+  float br = getLuma(IMG_NORM_PIXEL(tex, uv + px*vec2( 1, 1)));
+  float gx = -tl - 2.0*l - bl + tr + 2.0*r + br;
+  float gy = -tl - 2.0*t - tr + bl + 2.0*b + br;
+  float edgeMag = sqrt(gx*gx + gy*gy);
+  return clamp(edgeMag * 1.4, 0.0, 1.0);
+}
+
+float sketch(vec2 uv, float rot, float density, float intensity, float jitter, float progress, float modulator) {
+  float angle = rot + 0.3*sin(progress*3.1416 + rot);
+  float base = uv.x*cos(angle) + uv.y*sin(angle);
+  float j = (hash(uv*47.9 + base) - 0.5) * jitter;
+  float hatch = sin(base * density + j*8.0 + progress*3.1 + hash(uv*99.1)*4.0);
+  float g = smoothstep(-0.35, 0.38, hatch);
+  float pFill = smoothstep(0.29 - modulator*0.25, 0.91 + modulator*0.43, progress);
+  return g * intensity * modulator * pFill;
+}
+
+void main() {
+  vec2 uv = isf_FragNormCoord;
+  float t = TIME * animSpeed;
+
+  float edge = sobel(uv, endImage);
+  float luma = getLuma(IMG_NORM_PIXEL(endImage, uv));
+  float hatchMod = 1.0 - luma*lumaHatch;
+
+  float edgeReveal = smoothstep(0.14, 0.72, progress - edgeGain*(1.0-edge));
+
+  float hatchA = sketch(uv + t*0.021,  0.8, density, hatchIntensity, jitter, progress, hatchMod*edge);
+  float hatchB = sketch(uv - t*0.013, -0.7, density, hatchIntensity, jitter*1.5, progress, hatchMod*edge*0.8);
+  float hatchC = sketch(uv + t*0.017,  0.0, density*0.5, hatchIntensity*0.7, jitter*0.77, progress, hatchMod*0.4);
+
+  float hatchSum = clamp(hatchA + hatchB + hatchC, 0.0, 1.0);
+
+  float maskVal = clamp(edgeReveal + hatchSum, 0.0, 1.0);
+
+  float remapped = smoothstep(0.0, overlapDuration, progress);
+  float edge0 = remapped - overlapSoftness, edge1 = remapped + overlapSoftness;
+  float mask = smoothstep(edge0, edge1, maskVal);
+
+  vec4 start = IMG_NORM_PIXEL(startImage, uv);
+  vec4 end   = IMG_NORM_PIXEL(endImage, uv);
+
+  gl_FragColor = mix(start, end, mask);
+}
