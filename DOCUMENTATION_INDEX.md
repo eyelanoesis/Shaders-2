@@ -31,6 +31,18 @@
 
 ---
 
+### [docs/AI_TOOL_COMPARISON.md](docs/AI_TOOL_COMPARISON.md)
+**AI Tool Evaluation** covering:
+- OpenClaw vs GitHub Copilot comparison
+- Speed and performance analysis for shader development
+- Use case recommendations
+- Cost-benefit analysis
+- Hybrid workflow suggestions
+
+👉 **Read this** if considering different AI coding assistants.
+
+---
+
 ## 📚 Technical Documentation
 
 ### Repository Root
@@ -125,6 +137,7 @@
 - **Build FFGL plugins** → [ffgl_agentic/docs/guides/building.md](ffgl_agentic/docs/guides/building.md)
 - **Convert ISF to FFGL** → [docs/guides/ISF_TO_FFGL.md](docs/guides/ISF_TO_FFGL.md)
 - **Learn about AI-assisted workflow** → [docs/FFGL_AGENTIC_SETUP.md](docs/FFGL_AGENTIC_SETUP.md)
+- **Compare AI coding tools** → [docs/AI_TOOL_COMPARISON.md](docs/AI_TOOL_COMPARISON.md)
 - **See development history** → [docs/sessions/](docs/sessions/)
 
 ---
