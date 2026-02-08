@@ -31,6 +31,25 @@
 
 ---
 
+## 🌐 External Resources
+
+### [EXTERNAL_RESOURCES.md](EXTERNAL_RESOURCES.md)
+**Comprehensive catalog of all external resources** covering:
+- ISF specification, editors, and developer tools
+- FFGL SDK, examples, and plugin development guides
+- GLSL/OpenGL references and learning materials
+- Resolume Arena & Wire tutorials and installation paths
+- VJ software ecosystem compatibility
+- Fractal mathematics and visualization tools
+- Shader communities (Shadertoy, ISF Gallery, GLSL Sandbox)
+- AI-assisted creative coding workflows (GitHub Copilot)
+- Video sharing frameworks (Syphon, Spout, NDI)
+- Creative coding platforms and community hubs
+
+👉 **Use this** for links to all external tools, specs, and communities.
+
+---
+
 ## 📚 Technical Documentation
 
 ### Repository Root
@@ -108,7 +127,7 @@
 
 - **Total Shaders:** 8 (ISF format)
 - **FFGL Plugins:** 1 (SketchbookReveal)
-- **Documentation Files:** 9+ markdown files
+- **Documentation Files:** 10+ markdown files
 - **Code Size:** ~1,500 lines GLSL, ~450 lines C++
 - **Supported Platforms:** Windows, macOS, Linux
 - **Compatible Software:** 6+ VJ applications
@@ -119,6 +138,7 @@
 
 **I want to...**
 
+- **Find external tools, specs, and communities** → [EXTERNAL_RESOURCES.md](EXTERNAL_RESOURCES.md)
 - **Understand what this repo is about** → [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)
 - **Get technical details on all shaders** → [REPOSITORY_ANALYSIS.md](REPOSITORY_ANALYSIS.md)
 - **Use shaders in Resolume** → [mixers/SketchbookReveal/README.md](mixers/SketchbookReveal/README.md)
