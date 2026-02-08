@@ -7,7 +7,7 @@
 
 ## Question
 
-> "Will OpenClaw be better or faster or better than Copilot for what we are doing in /shaders-2?"
+> "Will OpenClaw be better or faster than Copilot for what we are doing in /shaders-2?"
 
 ## Executive Summary
 
@@ -393,7 +393,9 @@ This repository focuses on:
 ## Additional Resources
 
 - **GitHub Copilot Documentation:** https://docs.github.com/copilot
-- **OpenClaw Project:** https://openclaw.io (or GitHub repo)
+- **OpenClaw Official Website:** https://openclaw.ai
+- **OpenClaw GitHub Repository:** https://github.com/openclaw/openclaw
+- **OpenClaw Documentation:** https://docs.openclaw.ai
 - **Copilot Instructions in this repo:** `.github/copilot-instructions.md`
 - **AI Workflow Examples:** `docs/sessions/sketchbook_reveal_agent_session.md`
 
